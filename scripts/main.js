@@ -8,6 +8,8 @@ game.worldHeight = 24;
 game.tileWidth = 32;
 game.tileHeight = 32;
 
+game.selectedTile = [];
+
 game.path = {};
 game.canvas = {};
 
@@ -21,12 +23,26 @@ game.probability = (n) => {
 };
 
 // Setup functions
+game.canvasClick = (e) => {
+	// console.log(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
+	const clickX = e.clientX - e.target.offsetLeft;
+	const clickY = e.clientY - e.target.offsetTop;
+	const x = Math.floor(clickX / game.tileWidth);
+	const y = Math.floor(clickY / game.tileHeight);
+	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+		game.selectedTile = [];
+	}	else {
+		game.selectedTile = [x, y];
+	}
+	game.drawWorld();
+}
+
 game.getElements = () => {
   game.canvas = document.querySelector('#gameCanvas');
 	game.canvas.width = game.worldWidth * game.tileWidth;
   game.canvas.height = game.worldHeight * game.tileHeight;
   console.log(game.canvas.width, game.canvas.height);
-	// game.canvas.el.addEventListener("click", canvasClick, false);
+	game.canvas.addEventListener("click", game.canvasClick);
   game.ctx = game.canvas.getContext("2d");
   game.spritesheet = new Image();
   // game.spritesheet.src = '../assets/spritesheet.png';
@@ -62,6 +78,10 @@ game.drawWorld = () => {
         default:
           spriteNum = 0;
           break;
+			}
+
+			if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+				spriteNum = 2;
 			}
 
 			// draw it
