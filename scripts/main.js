@@ -1,14 +1,17 @@
 const game = {};
 
 game.world = [[]];
+game.path = [];
+game.findPath = findPath;
 
-game.worldWidth = 32;
+game.worldWidth = 24;
 game.worldHeight = 24;
 
 game.tileWidth = 32;
 game.tileHeight = 32;
 
 game.selectedTile = [];
+game.endTile = [];
 
 game.path = {};
 game.canvas = {};
@@ -31,13 +34,26 @@ game.canvasClick = (e) => {
 	const y = Math.floor(clickY / game.tileHeight);
 	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
 		game.selectedTile = [];
+	} else if (x === game.endTile[0] && y === game.endTile[1]) {
+		game.endTile = [];
+	} else if (game.selectedTile.length > 0) {
+		game.endTile = [x, y];
 	}	else {
 		game.selectedTile = [x, y];
 	}
 	game.drawWorld();
 }
 
+game.goToPath = () => {
+	if (game.selectedTile.length > 0 && game.endTile.length > 0) {
+		game.path = game.findPath(game.world, game.selectedTile, game.endTile);
+		game.drawWorld();
+	}
+}
+
 game.getElements = () => {
+	game.go = document.querySelector('#go');
+	game.go.addEventListener('click', game.goToPath);
   game.canvas = document.querySelector('#gameCanvas');
 	game.canvas.width = game.worldWidth * game.tileWidth;
   game.canvas.height = game.worldHeight * game.tileHeight;
@@ -82,6 +98,16 @@ game.drawWorld = () => {
 
 			if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
 				spriteNum = 2;
+			}
+
+			if (x === game.endTile[0] && y === game.endTile[1]) {
+				spriteNum = 3;
+			}
+
+			for (let i = 0; i < game.path.length; i++) {
+				if (x === game.path[i][0] && y === game.path[i][1]) {
+					spriteNum = 4;
+				}
 			}
 
 			// draw it
