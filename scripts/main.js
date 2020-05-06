@@ -20,6 +20,9 @@ game.path.start = [game.worldWidth,game.worldHeight];
 game.path.end = [0,0];
 game.path.current = [];
 
+game.actors = [];
+game.selectedActor = -1;
+
 // Helper functions
 game.probability = (n) => {
   return n > 0 && Math.random() <= n;
@@ -27,51 +30,76 @@ game.probability = (n) => {
 
 // Setup functions
 game.canvasClick = (e) => {
-	// console.log(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
 	const clickX = e.clientX - e.target.offsetLeft;
 	const clickY = e.clientY - e.target.offsetTop;
 	const x = Math.floor(clickX / game.tileWidth);
 	const y = Math.floor(clickY / game.tileHeight);
-	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-		game.selectedTile = [];
-	} else if (x === game.endTile[0] && y === game.endTile[1]) {
-		game.endTile = [];
-	} else if (game.selectedTile.length > 0) {
+	for (let i = 0; i < game.actors.length; i++) {
+		if (game.actors[i].x === x && game.actors[i].y === y) {
+			if (game.selectedActor !== i) {
+				game.selectedActor = i;
+				console.log(game.selectedActor);
+			} else {
+				game.selectedActor = -1;
+			}
+		}
+	}
+	if (game.selectedActor === -1) {
+		if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+			game.selectedTile = [];
+		// } else if (x === game.endTile[0] && y === game.endTile[1]) {
+		// 	game.endTile = [];
+		// } else if (game.selectedTile.length > 0) {
+		// 	game.endTile = [x, y];
+		}	else {
+			game.selectedTile = [x, y];
+		}
+	} else if (x !== game.actors[game.selectedActor].x && y !== game.actors[game.selectedActor].y) {
 		game.endTile = [x, y];
-	}	else {
-		game.selectedTile = [x, y];
 	}
 	game.drawWorld();
 }
 
-game.place = () => {
-	console.log('event');
-	if (game.selectedTile.length > 0 && game.endTile.length > 0) {
-		const path = game.findPath(game.world, game.selectedTile, game.endTile);
-		game.actor = new Actor(game.selectedTile[0], game.selectedTile[1], path);
+game.goToPath = () => {
+	for (let i = 0; i < game.actors.length; i++) {
+		game.actors[i].move();
 	}
 }
 
-game.goToPath = () => {
-	// if (game.selectedTile.length > 0 && game.endTile.length > 0) {
-	// 	game.path = game.findPath(game.world, game.selectedTile, game.endTile);
-	// 	game.drawWorld();
-	// }
-	if (game.actor) {
-		game.actor.move();
+game.setPlace = () => {
+	let path = [];
+	if (game.selectedTile.length > 0 && game.endTile.length > 0) {
+		path = game.findPath(game.world, game.selectedTile, game.endTile);
 	}
+	game.actors.push(new Actor(game.selectedTile[0], game.selectedTile[1], path));
+	game.drawWorld();
 }
+
+game.setGoal = () => {
+	if (game.selectedActor !== -1 && game.endTile.length > 0) {
+		const actor = game.actors[game.selectedActor];
+		actor.path = game.findPath(game.world, [actor.x, actor.y], game.endTile);
+	}
+};
 
 game.getElements = () => {
 	game.go = document.querySelector('#go');
 	game.go.addEventListener('click', game.goToPath);
+
 	game.place = document.querySelector('#place');
-	game.place.addEventListener('click', function () {
-		if (game.selectedTile.length > 0 && game.endTile.length > 0) {
-			const path = game.findPath(game.world, game.selectedTile, game.endTile);
-			game.actor = new Actor(game.selectedTile[0], game.selectedTile[1], path);
-		}
+	game.place.addEventListener('click', game.setPlace);
+
+	game.unselect = document.querySelector('#unselect');
+	game.unselect.addEventListener('click', () => {
+		game.selectedActor = -1;
+		game.selectedTile = [];
+		game.endTile = [];
+		game.drawWorld();
 	});
+
+	game.goalBtn = document.querySelector('#goal');
+	game.goalBtn.addEventListener('click', game.setGoal);
+
   game.canvas = document.querySelector('#gameCanvas');
 	game.canvas.width = game.worldWidth * game.tileWidth;
   game.canvas.height = game.worldHeight * game.tileHeight;
@@ -125,21 +153,23 @@ game.drawWorld = () => {
 			}
 
 			if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-				spriteNum = 2;
+				spriteNum = 4;
 			}
 
 			if (x === game.endTile[0] && y === game.endTile[1]) {
 				spriteNum = 3;
 			}
 
-			if (game.actor) {
+			if (game.actors.length > 0) {
 				// for (let i = 0; i < game.actor.path.length; i++) {
 				// 	if (x === game.actor.path[i][0] && y === game.actor.path[i][1]) {
 				// 		spriteNum = 4;
 				// 	}
 				// }
-				if (x === game.actor.x && y === game.actor.y) {
-					spriteNum = 4;
+				for (let i = 0; i < game.actors.length; i++) {
+					if (x === game.actors[i].x && y === game.actors[i].y) {
+						spriteNum = 4;
+					}
 				}
 			}
 
