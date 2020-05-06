@@ -38,9 +38,10 @@ game.canvasClick = (e) => {
 		if (game.actors[i].x === x && game.actors[i].y === y) {
 			if (game.selectedActor !== i) {
 				game.selectedActor = i;
-				console.log(game.selectedActor);
+				game.displaySelected.innerText = i;
 			} else {
 				game.selectedActor = -1;
+				game.displaySelected.innerText = '';
 			}
 		}
 	}
@@ -67,22 +68,25 @@ game.goToPath = () => {
 }
 
 game.setPlace = () => {
-	let path = [];
-	if (game.selectedTile.length > 0 && game.endTile.length > 0) {
-		path = game.findPath(game.world, game.selectedTile, game.endTile);
-	}
-	game.actors.push(new Actor(game.selectedTile[0], game.selectedTile[1], path));
+	// let path = [];
+	// if (game.selectedTile.length > 0 && game.endTile.length > 0) {
+	// 	path = game.findPath(game.world, game.selectedTile, game.endTile);
+	// }
+	game.actors.push(new Actor(game.selectedTile[0], game.selectedTile[1], []));
 	game.drawWorld();
 }
 
 game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
-		const actor = game.actors[game.selectedActor];
-		actor.path = game.findPath(game.world, [actor.x, actor.y], game.endTile);
+		// const actor = game.actors[game.selectedActor];
+		// actor.path = game.findPath(game.world, [actor.x, actor.y], game.endTile);
+		game.actors[game.selectedActor].goal = game.endTile;
 	}
 };
 
 game.getElements = () => {
+	game.displaySelected = document.querySelector('#selected');
+
 	game.go = document.querySelector('#go');
 	game.go.addEventListener('click', game.goToPath);
 
@@ -94,6 +98,7 @@ game.getElements = () => {
 		game.selectedActor = -1;
 		game.selectedTile = [];
 		game.endTile = [];
+		game.displaySelected.innerText = '';
 		game.drawWorld();
 	});
 
@@ -145,7 +150,11 @@ game.drawWorld = () => {
 			switch(game.world[x][y]) {
         case 1:
           spriteNum = 1;
-          break;
+					break;
+					
+				case 4:
+					spriteNum = 4;
+					break;
 
         default:
           spriteNum = 0;
@@ -160,18 +169,13 @@ game.drawWorld = () => {
 				spriteNum = 3;
 			}
 
-			if (game.actors.length > 0) {
-				// for (let i = 0; i < game.actor.path.length; i++) {
-				// 	if (x === game.actor.path[i][0] && y === game.actor.path[i][1]) {
-				// 		spriteNum = 4;
-				// 	}
-				// }
-				for (let i = 0; i < game.actors.length; i++) {
-					if (x === game.actors[i].x && y === game.actors[i].y) {
-						spriteNum = 4;
-					}
-				}
-			}
+			// if (game.actors.length > 0) {
+			// 	for (let i = 0; i < game.actors.length; i++) {
+			// 		if (x === game.actors[i].x && y === game.actors[i].y) {
+			// 			spriteNum = 4;
+			// 		}
+			// 	}
+			// }
 
 			// draw it
 			// ctx.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
