@@ -1,15 +1,15 @@
+// the world data are integers:
+// anything higher than this number is considered blocked
+// this is handy is you use numbered sprites, more than one
+// of which is walkable road, grass, mud, etc
+const maxWalkableTileNum = 0;
+
 const findPath = (world, pathStart, pathEnd) => {
 	// shortcuts for speed
 	const	abs = Math.abs;
 	const	max = Math.max;
 	const	pow = Math.pow;
 	const	sqrt = Math.sqrt;
-
-	// the world data are integers:
-	// anything higher than this number is considered blocked
-	// this is handy is you use numbered sprites, more than one
-	// of which is walkable road, grass, mud, etc
-	const maxWalkableTileNum = 0;
 
 	// keep track of the world dimensions
     // Note that this A-star implementation expects the world array to be square: 
