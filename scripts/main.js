@@ -10,6 +10,8 @@ game.worldHeight = 24;
 game.tileWidth = 32;
 game.tileHeight = 32;
 
+game.maxWalkableTileNum = 0;
+
 game.selectedTile = [];
 game.endTile = [];
 

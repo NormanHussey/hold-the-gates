@@ -10,7 +10,7 @@ class Actor {
   move() {
     if (this.goal.length > 0) {
       game.world[this.x][this.y] = 0;
-      this.path = game.findPath(game.world, [this.x, this.y], [this.goal[0], this.goal[1]]);
+      this.path = game.findPath(game.world, [this.x, this.y], this.goal);
       this.path.shift();
       if (this.path.length === 0) {
         game.world[this.x][this.y] = 4;
@@ -31,29 +31,46 @@ class Actor {
   findNextNearestGoal() {
     let prevX = this.goal[0];
     let prevY = this.goal[1];
-    let xChange, yChange;
+    let xDir, yDir;
     if (this.x < prevX) {
-      xChange = -1;
-    } else if (this.x > prevX) {
-      xChange = 1;
+      xDir = 1;
     } else {
-      xChange = 0;
-    }
-    if (this.y < prevY) {
-      yChange = -1;
-    } else if (this.y > prevY) {
-      yChange = 1;
-    } else {
-      yChange = 0;
+      xDir = -1;
     }
 
-    if (game.world[prevX + xChange][prevY + yChange] <= maxWalkableTileNum) {
-      this.path = game.findPath(game.world, [this.x, this.y], [prevX + xChange, prevY + yChange]);
-    } else if (game.world[prevX][prevY + yChange] <= maxWalkableTileNum) {
-      this.path = game.findPath(game.world, [this.x, this.y], [prevX, prevY + yChange]);
-    } else if (game.world[prevX + xChange][prevY] <= maxWalkableTileNum) {
-      this.path = game.findPath(game.world, [this.x, this.y], [prevX + xChange, prevY]);
+    if (this.y < prevY) {
+      yDir = 1;
+    } else {
+      yDir = -1;
     }
+
+    let goal = [];
+    let dist = 1;
+    while (goal.length === 0) {
+
+      if (game.world[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX - (dist * xDir), prevY - (dist * yDir)];
+      } else if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX, prevY - (dist * yDir)];
+      } else if (game.world[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
+        goal = [prevX - (dist * xDir), prevY];
+      } else if (game.world[prevX + (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX + (dist * xDir), prevY - (dist * yDir)];
+      } else if (game.world[prevX - (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX - (dist * xDir), prevY + (dist * yDir)];
+      } else if (game.world[prevX + (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
+        goal = [prevX + (dist * xDir), prevY];
+      } else if (game.world[prevX][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX, prevY + (dist * yDir)];
+      } else if (game.world[prevX + (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX + (dist * xDir), prevY + (dist * yDir)];
+      } else {
+        dist++;
+      }
+
+    }
+    this.goal = goal;
+    this.path = game.findPath(game.world, [this.x, this.y], this.goal);
 
   }
 

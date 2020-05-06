@@ -2,7 +2,6 @@
 // anything higher than this number is considered blocked
 // this is handy is you use numbered sprites, more than one
 // of which is walkable road, grass, mud, etc
-const maxWalkableTileNum = 0;
 
 const findPath = (world, pathStart, pathEnd) => {
 	// shortcuts for speed
@@ -89,7 +88,7 @@ const findPath = (world, pathStart, pathEnd) => {
 	{
 		return ((world[x] != null) &&
 			(world[x][y] != null) &&
-			(world[x][y] <= maxWalkableTileNum));
+			(world[x][y] <= game.maxWalkableTileNum));
 	};
 
 	// Node function, returns a new object with Node properties
