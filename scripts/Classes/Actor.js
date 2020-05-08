@@ -2,23 +2,24 @@ class Actor {
   constructor(x, y, goal = []) {
     this.x = x;
     this.y = y;
-    game.world[this.x][this.y] = 4;
+    this.sprite = 6;
+    game.sprites[this.x][this.y] = this.sprite;
     this.path = [];
     this.goal = goal;
   }
 
   move() {
     if (this.goal.length > 0) {
-      game.world[this.x][this.y] = 0;
+      game.sprites[this.x][this.y] = 0;
       this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
       this.path.shift();
       if (this.path.length === 0) {
-        game.world[this.x][this.y] = 4;
+        game.sprites[this.x][this.y] = this.sprite;
         this.findNextNearestGoal();
       } else {
         this.x = this.path[0][0];
         this.y = this.path[0][1];
-        game.world[this.x][this.y] = 4;
+        game.sprites[this.x][this.y] = this.sprite;
         if (this.x === this.goal[0] && this.y === this.goal[1]) {
           this.goal = [];
           this.path = [];
@@ -76,7 +77,7 @@ class Actor {
 
   drawSelf() {
     const self = this;
-    game.drawWorld();
+    game.drawSprites();
     if (this.path.length > 0) {
       setTimeout(function () {
         self.move();
