@@ -2,6 +2,8 @@ const game = {};
 
 game.world = [[]];
 game.sprites = [[]];
+game.gui = [[]];
+
 game.path = [];
 game.findPath = findPath;
 
@@ -32,7 +34,7 @@ game.probability = (n) => {
 };
 
 // Setup functions
-game.canvasWorldClick = (e) => {
+game.canvasClick = (e) => {
 	const clickX = e.clientX - e.target.offsetLeft;
 	const clickY = e.clientY - e.target.offsetTop;
 	const x = Math.floor(clickX / game.tileWidth);
@@ -51,17 +53,13 @@ game.canvasWorldClick = (e) => {
 	if (game.selectedActor === -1) {
 		if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
 			game.selectedTile = [];
-		// } else if (x === game.endTile[0] && y === game.endTile[1]) {
-		// 	game.endTile = [];
-		// } else if (game.selectedTile.length > 0) {
-		// 	game.endTile = [x, y];
 		}	else {
 			game.selectedTile = [x, y];
 		}
 	} else if (x !== game.actors[game.selectedActor].x && y !== game.actors[game.selectedActor].y) {
 		game.endTile = [x, y];
 	}
-	game.drawSprites();
+	game.drawGUI();
 }
 
 game.goToPath = () => {
@@ -76,7 +74,7 @@ game.setPlace = () => {
 	// 	path = game.findPath(game.world, game.selectedTile, game.endTile);
 	// }
 	game.actors.push(new Actor(game.selectedTile[0], game.selectedTile[1], []));
-	game.drawWorld();
+	game.drawSprites();
 }
 
 game.setGoal = () => {
@@ -102,7 +100,7 @@ game.getElements = () => {
 		game.selectedTile = [];
 		game.endTile = [];
 		game.displaySelected.innerText = '';
-		game.drawSprites();
+		game.drawGUI();
 	});
 
 	game.goalBtn = document.querySelector('#goal');
@@ -112,13 +110,18 @@ game.getElements = () => {
 	game.canvasWorld.width = game.worldWidth * game.tileWidth;
 	game.canvasWorld.height = game.worldHeight * game.tileHeight;
   game.ctxWorld = game.canvasWorld.getContext("2d");
-  // console.log(game.canvasWorld.width, game.canvasWorld.height);
 	
   game.canvasSprites = document.querySelector('#spritesCanvas');
 	game.canvasSprites.width = game.worldWidth * game.tileWidth;
 	game.canvasSprites.height = game.worldHeight * game.tileHeight;
 	game.ctxSprites = game.canvasSprites.getContext("2d");
-	game.canvasSprites.addEventListener("click", game.canvasWorldClick);
+	// game.canvasSprites.addEventListener("click", game.canvasClick);
+
+  game.canvasGUI = document.querySelector('#guiCanvas');
+	game.canvasGUI.width = game.worldWidth * game.tileWidth;
+	game.canvasGUI.height = game.worldHeight * game.tileHeight;
+	game.ctxGUI = game.canvasGUI.getContext("2d");
+	game.canvasGUI.addEventListener("click", game.canvasClick);
 
   game.spritesheet = new Image();
   // game.spritesheet.src = '../assets/spritesheet.png';
@@ -146,6 +149,16 @@ game.buildRandomWalls = (n) => {
   }
 }
 
+game.buildRandomForests = (n) => {
+	for (let x = 0; x < game.worldWidth; x++) {
+		for (let y = 0; y < game.worldHeight; y++) {
+			if (game.probability(n)) {
+			  game.world[x][y] = 4;
+		  }
+    }
+  }
+}
+
 game.drawWorld = () => {
 
 	// let spriteNum = 0;
@@ -156,41 +169,8 @@ game.drawWorld = () => {
 
 	for (let x = 0; x < game.worldWidth; x++) {
 		for (let y = 0; y < game.worldHeight; y++) {
-
 			const spriteNum = game.world[x][y];
-			// choose a sprite to draw
-			// switch(game.world[x][y]) {
-      //   case 1:
-      //     spriteNum = 1;
-			// 		break;
-					
-			// 	case 4:
-			// 		spriteNum = 4;
-			// 		break;
 
-      //   default:
-      //     spriteNum = 0;
-      //     break;
-			// }
-
-			// if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-			// 	spriteNum = 4;
-			// }
-
-			// if (x === game.endTile[0] && y === game.endTile[1]) {
-			// 	spriteNum = 3;
-			// }
-
-			// if (game.actors.length > 0) {
-			// 	for (let i = 0; i < game.actors.length; i++) {
-			// 		if (x === game.actors[i].x && y === game.actors[i].y) {
-			// 			spriteNum = 4;
-			// 		}
-			// 	}
-			// }
-
-			// draw it
-			// ctx.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
 			game.ctxWorld.drawImage(game.spritesheet,
 			spriteNum * game.tileWidth, 0,
 			game.tileWidth, game.tileHeight,
@@ -205,15 +185,15 @@ game.drawSprites = () => {
 	game.ctxSprites.clearRect(0, 0, game.canvasSprites.width, game.canvasSprites.height);
 	for (let x = 0; x < game.worldWidth; x++) {
 		for (let y = 0; y < game.worldHeight; y++) {
-			let spriteNum = game.sprites[x][y];
+			const spriteNum = game.sprites[x][y];
 
-			if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-				spriteNum = 1;
-			}
+			// if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+			// 	spriteNum = 1;
+			// }
 
-			if (x === game.endTile[0] && y === game.endTile[1]) {
-				spriteNum = 1;
-			}
+			// if (x === game.endTile[0] && y === game.endTile[1]) {
+			// 	spriteNum = 1;
+			// }
 
 			game.ctxSprites.drawImage(game.spritesheet,
 				spriteNum * game.tileWidth, 0,
@@ -224,19 +204,44 @@ game.drawSprites = () => {
 	}
 }
 
+game.drawGUI = () => {
+	game.ctxGUI.clearRect(0, 0, game.canvasGUI.width, game.canvasGUI.height);
+	for (let x = 0; x < game.worldWidth; x++) {
+		for (let y = 0; y < game.worldHeight; y++) {
+			let spriteNum = game.gui[x][y];
+
+			if ((x === game.selectedTile[0] && y === game.selectedTile[1]) || (x === game.endTile[0] && y === game.endTile[1]) || (game.selectedActor !== -1 && game.actors[game.selectedActor].x === x && game.actors[game.selectedActor].y === y)) {
+				spriteNum = 1;
+			}
+
+			game.ctxGUI.drawImage(game.spritesheet,
+				spriteNum * game.tileWidth, 0,
+				game.tileWidth, game.tileHeight,
+				x * game.tileWidth, y * game.tileHeight,
+				game.tileWidth, game.tileHeight);
+		}
+	}
+}
+
+
+
 game.createWorld = () => {
 	// create emptiness
 	for (let x = 0; x < game.worldWidth; x++) {
 		game.world[x] = [];
 		game.sprites[x] = [];
+		game.gui[x] = [];
 		for (let y = 0; y < game.worldHeight; y++) {
 			game.world[x][y] = 2;
 			game.sprites[x][y] = 0;
+			game.gui[x][y] = 0;
 		}
   }
-	game.buildRandomWalls(0.25);
+	game.buildRandomWalls(0.1);
+	game.buildRandomForests(0.1);
 	game.drawWorld();
 	game.drawSprites();
+	game.drawGUI();
 }
 
 

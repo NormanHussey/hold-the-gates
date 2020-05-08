@@ -1,8 +1,9 @@
 class Actor {
-  constructor(x, y, goal = []) {
+  constructor(x, y, goal = [], sprite = 6, speed = 150) {
     this.x = x;
     this.y = y;
-    this.sprite = 6;
+    this.sprite = sprite;
+    this.speed = speed;
     game.sprites[this.x][this.y] = this.sprite;
     this.path = [];
     this.goal = goal;
@@ -81,7 +82,7 @@ class Actor {
     if (this.path.length > 0) {
       setTimeout(function () {
         self.move();
-      }, 100);
+      }, this.speed);
     }
   }
 
