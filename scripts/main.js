@@ -17,7 +17,6 @@ game.maxWalkableTileNum = 2;
 game.selectedTile = [];
 game.endTile = [];
 
-game.actors = [];
 game.selectedActor = -1;
 
 game.base = {};
@@ -36,8 +35,11 @@ game.base.inventory = {
 	gold: 0
 };
 
-game.base.population = {
-	workers: 2
+game.base.workers = [];
+
+game.resources = {
+	wood: [],
+	stone: []
 };
 
 // Helper functions
@@ -51,8 +53,8 @@ game.canvasClick = (e) => {
 	const clickY = e.clientY - e.target.offsetTop;
 	const x = Math.floor(clickX / game.tileWidth);
 	const y = Math.floor(clickY / game.tileHeight);
-	for (let i = 0; i < game.actors.length; i++) {
-		if (game.actors[i].x === x && game.actors[i].y === y) {
+	for (let i = 0; i < game.base.workers.length; i++) {
+		if (game.base.workers[i].x === x && game.base.workers[i].y === y) {
 			if (game.selectedActor !== i) {
 				game.selectedActor = i;
 				game.displaySelected.innerText = i;
@@ -68,27 +70,45 @@ game.canvasClick = (e) => {
 		}	else {
 			game.selectedTile = [x, y];
 		}
-	} else if (x !== game.actors[game.selectedActor].x && y !== game.actors[game.selectedActor].y) {
+	} else if (x !== game.base.workers[game.selectedActor].x && y !== game.base.workers[game.selectedActor].y) {
 		game.endTile = [x, y];
 	}
 	game.drawGUI();
 }
 
 game.goToPath = () => {
-	for (let i = 0; i < game.actors.length; i++) {
-		game.actors[i].move();
+	for (let i = 0; i < game.base.workers.length; i++) {
+		game.base.workers[i].move();
 	}
 }
 
 game.setPlace = () => {
-	game.actors.push(new Actor(game.selectedTile[0], game.selectedTile[1], []));
+	game.base.workers.push(new Actor(game.selectedTile[0], game.selectedTile[1], []));
 	game.drawSprites();
 }
 
 game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
 		// console.log(game.endTile);
-		game.actors[game.selectedActor].goal = game.endTile;
+		game.base.workers[game.selectedActor].goal = game.endTile;
+		for (let i = 0; i < game.resources.wood.length; i++) {
+			if (game.endTile[0] === game.resources.wood[i][0] && game.endTile[1] === game.resources.wood[i][1]) {
+				console.log('wood');
+				game.base.workers[game.selectedActor].work.type = 'wood';
+				game.base.workers[game.selectedActor].work.location = game.endTile;
+				game.base.workers[game.selectedActor].working = true;
+				return;
+			}
+		}
+		for (let i = 0; i < game.resources.stone.length; i++) {
+			if (game.endTile[0] === game.resources.stone[i][0] && game.endTile[1] === game.resources.stone[i][1]) {
+				console.log('stone');
+				game.base.workers[game.selectedActor].work.type = 'stone';
+				game.base.workers[game.selectedActor].work.location = game.endTile;
+				game.base.workers[game.selectedActor].working = true;
+				return;
+			}
+		}
 	}
 };
 
@@ -150,6 +170,7 @@ game.buildRandomStone = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 3;
+					game.resources.stone.push([x, y]);
 				}
 			}
     }
@@ -162,6 +183,7 @@ game.buildRandomForests = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 4;
+					game.resources.wood.push([x, y]);
 				}
 			}
     }
@@ -207,7 +229,7 @@ game.drawGUI = () => {
 		for (let y = 0; y < game.worldHeight; y++) {
 			let spriteNum = game.gui[x][y];
 
-			if ((x === game.selectedTile[0] && y === game.selectedTile[1]) || (x === game.endTile[0] && y === game.endTile[1]) || (game.selectedActor !== -1 && game.actors[game.selectedActor].x === x && game.actors[game.selectedActor].y === y)) {
+			if ((x === game.selectedTile[0] && y === game.selectedTile[1]) || (x === game.endTile[0] && y === game.endTile[1]) || (game.selectedActor !== -1 && game.base.workers[game.selectedActor].x === x && game.base.workers[game.selectedActor].y === y)) {
 				spriteNum = 1;
 			}
 
@@ -221,8 +243,8 @@ game.drawGUI = () => {
 }
 
 game.placeWorkers = () => {
-	game.actors.push(new Worker(11, 11, []));
-	game.actors.push(new Worker(13, 13, []));
+	game.base.workers.push(new Worker(11, 11, []));
+	game.base.workers.push(new Worker(13, 13, []));
 }
 
 game.createWorld = () => {
