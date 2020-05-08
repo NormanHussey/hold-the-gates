@@ -10,7 +10,7 @@ class Actor {
   move() {
     if (this.goal.length > 0) {
       game.world[this.x][this.y] = 0;
-      this.path = game.findPath(game.world, [this.x, this.y], this.goal);
+      this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
       this.path.shift();
       if (this.path.length === 0) {
         game.world[this.x][this.y] = 4;
@@ -70,7 +70,7 @@ class Actor {
 
     }
     this.goal = goal;
-    this.path = game.findPath(game.world, [this.x, this.y], this.goal);
+    this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
 
   }
 

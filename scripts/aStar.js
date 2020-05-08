@@ -3,7 +3,7 @@
 // this is handy is you use numbered sprites, more than one
 // of which is walkable road, grass, mud, etc
 
-const findPath = (world, pathStart, pathEnd) => {
+const findPath = (world, sprites, pathStart, pathEnd) => {
 	// shortcuts for speed
 	const	abs = Math.abs;
 	const	max = Math.max;
@@ -88,7 +88,8 @@ const findPath = (world, pathStart, pathEnd) => {
 	{
 		return ((world[x] != null) &&
 			(world[x][y] != null) &&
-			(world[x][y] <= game.maxWalkableTileNum));
+			(world[x][y] <= game.maxWalkableTileNum) &&
+			(sprites[x][y] === 0));
 	};
 
 	// Node function, returns a new object with Node properties
