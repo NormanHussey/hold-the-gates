@@ -20,6 +20,26 @@ game.endTile = [];
 game.actors = [];
 game.selectedActor = -1;
 
+game.base = {};
+
+game.base.keep = {
+	x: 12,
+	y: 12,
+	sprite: 5,
+	health: 100,
+	maxHealth: 100
+};
+
+game.base.inventory = {
+	wood: 0,
+	stone: 0,
+	gold: 0
+};
+
+game.base.population = {
+	workers: 2
+};
+
 // Helper functions
 game.probability = (n) => {
   return n > 0 && Math.random() <= n;
@@ -67,6 +87,7 @@ game.setPlace = () => {
 
 game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
+		// console.log(game.endTile);
 		game.actors[game.selectedActor].goal = game.endTile;
 	}
 };
@@ -110,7 +131,7 @@ game.getElements = () => {
 	game.canvasGUI.addEventListener("click", game.canvasClick);
 
   game.spritesheet = new Image();
-	game.spritesheet.src = 'data:image/png;base64,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';
+	game.spritesheet.src = 'data:image/png;base64,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';
 	game.spritesheet.loaded = false;
 	game.spritesheet.onload = setSpriteSheetReady;
 }
@@ -123,12 +144,14 @@ async function setSpriteSheetReady () {
 	await ready;
 }
 
-game.buildRandomWalls = (n) => {
+game.buildRandomStone = (n) => {
 	for (let x = 0; x < game.worldWidth; x++) {
 		for (let y = 0; y < game.worldHeight; y++) {
-			if (game.probability(n)) {
-			  game.world[x][y] = 3;
-		  }
+			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
+				if (game.probability(n)) {
+					game.world[x][y] = 3;
+				}
+			}
     }
   }
 }
@@ -136,9 +159,11 @@ game.buildRandomWalls = (n) => {
 game.buildRandomForests = (n) => {
 	for (let x = 0; x < game.worldWidth; x++) {
 		for (let y = 0; y < game.worldHeight; y++) {
-			if (game.probability(n)) {
-			  game.world[x][y] = 4;
-		  }
+			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
+				if (game.probability(n)) {
+					game.world[x][y] = 4;
+				}
+			}
     }
   }
 }
@@ -195,7 +220,10 @@ game.drawGUI = () => {
 	}
 }
 
-
+game.placeWorkers = () => {
+	game.actors.push(new Worker(11, 11, []));
+	game.actors.push(new Worker(13, 13, []));
+}
 
 game.createWorld = () => {
 	// create emptiness
@@ -209,8 +237,10 @@ game.createWorld = () => {
 			game.gui[x][y] = 0;
 		}
   }
-	game.buildRandomWalls(0.1);
+	game.buildRandomStone(0.1);
 	game.buildRandomForests(0.1);
+	game.sprites[game.base.keep.x][game.base.keep.y] = game.base.keep.sprite;
+	game.placeWorkers();
 	game.drawWorld();
 	game.drawSprites();
 	game.drawGUI();

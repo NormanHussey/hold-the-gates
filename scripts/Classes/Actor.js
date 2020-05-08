@@ -1,5 +1,5 @@
 class Actor {
-  constructor(x, y, goal = [], sprite = 6, speed = 150) {
+  constructor(x, y, goal = [], sprite, speed) {
     this.x = x;
     this.y = y;
     this.sprite = sprite;
