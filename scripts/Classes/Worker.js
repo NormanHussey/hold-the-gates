@@ -16,27 +16,11 @@ class Worker extends Actor {
   }
 
   move() {
-    if (this.goal.length > 0) {
-      game.sprites[this.x][this.y] = 0;
-      this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
-      this.path.shift();
-      if (this.path.length === 0) {
-        game.sprites[this.x][this.y] = this.sprite;
-        this.findNextNearestGoal();
-      } else {
-        this.x = this.path[0][0];
-        this.y = this.path[0][1];
-        game.sprites[this.x][this.y] = this.sprite;
-        if (this.x === this.goal[0] && this.y === this.goal[1]) {
-          this.goal = [];
-          this.path = [];
-          if (this.working) {
-            this.performWork();
-          }
-        }
+    super.move(() => {
+      if (this.working) {
+        this.performWork();
       }
-      this.drawSelf();
-    }
+    });
   }
 
   performWork() {

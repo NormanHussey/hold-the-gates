@@ -9,7 +9,7 @@ class Actor {
     this.goal = goal;
   }
 
-  move() {
+  move(goalReached = () => {}) {
     if (this.goal.length > 0) {
       game.sprites[this.x][this.y] = 0;
       this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
@@ -24,6 +24,7 @@ class Actor {
         if (this.x === this.goal[0] && this.y === this.goal[1]) {
           this.goal = [];
           this.path = [];
+          goalReached();
         }
       }
       this.drawSelf();
