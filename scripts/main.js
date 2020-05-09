@@ -19,6 +19,8 @@ game.endTile = [];
 
 game.selectedActor = -1;
 
+game.display = {};
+
 game.base = {};
 
 game.base.keep = {
@@ -54,10 +56,10 @@ game.canvasClick = (e) => {
 		if (game.base.workers[i].x === x && game.base.workers[i].y === y) {
 			if (game.selectedActor !== i) {
 				game.selectedActor = i;
-				game.displaySelected.innerText = i;
+				// game.displaySelected.innerText = i;
 			} else {
 				game.selectedActor = -1;
-				game.displaySelected.innerText = '';
+				// game.displaySelected.innerText = '';
 			}
 		}
 	}
@@ -67,7 +69,7 @@ game.canvasClick = (e) => {
 		}	else {
 			game.selectedTile = [x, y];
 		}
-	} else if (x !== game.base.workers[game.selectedActor].x && y !== game.base.workers[game.selectedActor].y) {
+	} else {
 		game.endTile = [x, y];
 	}
 	game.drawGUI();
@@ -88,7 +90,7 @@ game.unselectAll = () => {
 	game.selectedActor = -1;
 	game.selectedTile = [];
 	game.endTile = [];
-	game.displaySelected.innerText = '';
+	// game.displaySelected.innerText = '';
 	game.drawGUI();
 }
 
@@ -97,16 +99,28 @@ game.setGoal = () => {
 		// console.log(game.endTile);
 		game.base.workers[game.selectedActor].goal = game.endTile;
 		if (game.resources[`${game.endTile[0]}${game.endTile[1]}`]) {
-			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0], game.endTile[1]}`];
+			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0]}${game.endTile[1]}`];
 			game.base.workers[game.selectedActor].work.location = game.endTile;
 			game.base.workers[game.selectedActor].working = true;
+		} else {
+			game.base.workers[game.selectedActor].working = false;
+			game.base.workers[game.selectedActor].returning = false;
 		}
 	}
 	game.unselectAll();
 };
 
+game.updateDisplay = () => {
+	game.display.wood.innerText = game.base.inventory.wood;
+	game.display.stone.innerText = game.base.inventory.stone;
+	game.display.gold.innerText = game.base.inventory.gold;
+}
+
 game.getElements = () => {
-	game.displaySelected = document.querySelector('#selected');
+	// game.displaySelected = document.querySelector('#selected');
+	game.display.wood = document.querySelector('#woodInventory');
+	game.display.stone = document.querySelector('#stoneInventory');
+	game.display.gold = document.querySelector('#goldInventory');
 
 	game.go = document.querySelector('#go');
 	game.go.addEventListener('click', game.goToPath);
@@ -248,7 +262,6 @@ game.createWorld = () => {
   }
 	game.buildRandomStone(0.1);
 	game.buildRandomForests(0.1);
-	console.log(Object.keys(game.resources));
 	game.sprites[game.base.keep.x][game.base.keep.y] = game.base.keep.sprite;
 	game.placeWorkers();
 	game.drawWorld();
@@ -259,7 +272,6 @@ game.createWorld = () => {
 
 game.init = () => {
 	game.getElements();
-
 }
 
 // Document Ready
