@@ -37,10 +37,7 @@ game.base.inventory = {
 
 game.base.workers = [];
 
-game.resources = {
-	wood: [],
-	stone: []
-};
+game.resources = {};
 
 // Helper functions
 game.probability = (n) => {
@@ -87,29 +84,25 @@ game.setPlace = () => {
 	game.drawSprites();
 }
 
+game.unselectAll = () => {
+	game.selectedActor = -1;
+	game.selectedTile = [];
+	game.endTile = [];
+	game.displaySelected.innerText = '';
+	game.drawGUI();
+}
+
 game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
 		// console.log(game.endTile);
 		game.base.workers[game.selectedActor].goal = game.endTile;
-		for (let i = 0; i < game.resources.wood.length; i++) {
-			if (game.endTile[0] === game.resources.wood[i][0] && game.endTile[1] === game.resources.wood[i][1]) {
-				console.log('wood');
-				game.base.workers[game.selectedActor].work.type = 'wood';
-				game.base.workers[game.selectedActor].work.location = game.endTile;
-				game.base.workers[game.selectedActor].working = true;
-				return;
-			}
-		}
-		for (let i = 0; i < game.resources.stone.length; i++) {
-			if (game.endTile[0] === game.resources.stone[i][0] && game.endTile[1] === game.resources.stone[i][1]) {
-				console.log('stone');
-				game.base.workers[game.selectedActor].work.type = 'stone';
-				game.base.workers[game.selectedActor].work.location = game.endTile;
-				game.base.workers[game.selectedActor].working = true;
-				return;
-			}
+		if (game.resources[`${game.endTile[0], game.endTile[1]}`]) {
+			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0], game.endTile[1]}`];
+			game.base.workers[game.selectedActor].work.location = game.endTile;
+			game.base.workers[game.selectedActor].working = true;
 		}
 	}
+	game.unselectAll();
 };
 
 game.getElements = () => {
@@ -122,13 +115,7 @@ game.getElements = () => {
 	game.place.addEventListener('click', game.setPlace);
 
 	game.unselect = document.querySelector('#unselect');
-	game.unselect.addEventListener('click', () => {
-		game.selectedActor = -1;
-		game.selectedTile = [];
-		game.endTile = [];
-		game.displaySelected.innerText = '';
-		game.drawGUI();
-	});
+	game.unselect.addEventListener('click', game.unselectAll);
 
 	game.goalBtn = document.querySelector('#goal');
 	game.goalBtn.addEventListener('click', game.setGoal);
@@ -170,7 +157,7 @@ game.buildRandomStone = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 3;
-					game.resources.stone.push([x, y]);
+					game.resources[`${x, y}`] = 'stone';
 				}
 			}
     }
@@ -183,7 +170,7 @@ game.buildRandomForests = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 4;
-					game.resources.wood.push([x, y]);
+					game.resources[`${x, y}`] = 'wood';
 				}
 			}
     }
