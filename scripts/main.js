@@ -63,16 +63,16 @@ game.canvasClick = (e) => {
 			}
 		}
 	}
-	if (game.selectedActor === -1) {
-		if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-			game.selectedTile = [];
-		}	else {
-			game.selectedTile = [x, y];
-		}
-	} else {
+	if (game.selectedActor !== -1) {
+	// 	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+	// 		game.selectedTile = [];
+	// 	}	else {
+	// 		game.selectedTile = [x, y];
+	// 	}
+	// } else {
 		game.endTile = [x, y];
 	}
-	game.drawGUI();
+	// game.drawGUI();
 }
 
 game.goToPath = () => {
@@ -91,7 +91,7 @@ game.unselectAll = () => {
 	game.selectedTile = [];
 	game.endTile = [];
 	// game.displaySelected.innerText = '';
-	game.drawGUI();
+	// game.drawGUI();
 }
 
 game.setGoal = () => {
@@ -269,9 +269,18 @@ game.createWorld = () => {
 	game.drawGUI();
 }
 
+game.update = () => {
+	game.drawGUI();
+	for (let i = 0; i < game.base.workers.length; i++) {
+		game.base.workers[i].update();
+	}
+	requestAnimationFrame(game.update);
+}
+
 
 game.init = () => {
 	game.getElements();
+	window.requestAnimationFrame(game.update);
 }
 
 // Document Ready

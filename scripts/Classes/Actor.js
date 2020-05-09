@@ -7,10 +7,12 @@ class Actor {
     game.sprites[this.x][this.y] = this.sprite;
     this.path = [];
     this.goal = goal;
+    this.moving = false;
   }
 
   move(goalReached = () => {}) {
     if (this.goal.length > 0) {
+      this.moving = true;
       game.sprites[this.x][this.y] = 0;
       this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
       this.path.shift();
@@ -22,6 +24,7 @@ class Actor {
         this.y = this.path[0][1];
         game.sprites[this.x][this.y] = this.sprite;
         if (this.x === this.goal[0] && this.y === this.goal[1]) {
+          this.moving = false;
           this.goal = [];
           this.path = [];
           goalReached();

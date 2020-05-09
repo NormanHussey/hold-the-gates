@@ -16,6 +16,12 @@ class Worker extends Actor {
     }
   }
 
+  update() {
+    if (!this.moving) {
+      this.move();
+    }
+  }
+
   move() {
     super.move(() => {
       if (this.working) {
@@ -34,7 +40,7 @@ class Worker extends Actor {
       } else {
         this.work.holding++;
       }
-    }, this.speed * 2);
+    }, this.speed * 4);
     
   }
 
