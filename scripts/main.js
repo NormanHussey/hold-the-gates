@@ -96,7 +96,7 @@ game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
 		// console.log(game.endTile);
 		game.base.workers[game.selectedActor].goal = game.endTile;
-		if (game.resources[`${game.endTile[0], game.endTile[1]}`]) {
+		if (game.resources[`${game.endTile[0]}${game.endTile[1]}`]) {
 			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0], game.endTile[1]}`];
 			game.base.workers[game.selectedActor].work.location = game.endTile;
 			game.base.workers[game.selectedActor].working = true;
@@ -157,7 +157,7 @@ game.buildRandomStone = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 3;
-					game.resources[`${x, y}`] = 'stone';
+					game.resources[`${x}${y}`] = 'stone';
 				}
 			}
     }
@@ -170,7 +170,7 @@ game.buildRandomForests = (n) => {
 			if ((x < game.base.keep.x - 2 || x > game.base.keep.x + 2) && (y < game.base.keep.y - 2 || y > game.base.keep.y + 2)) {
 				if (game.probability(n)) {
 					game.world[x][y] = 4;
-					game.resources[`${x, y}`] = 'wood';
+					game.resources[`${x}${y}`] = 'wood';
 				}
 			}
     }
@@ -248,6 +248,7 @@ game.createWorld = () => {
   }
 	game.buildRandomStone(0.1);
 	game.buildRandomForests(0.1);
+	console.log(Object.keys(game.resources));
 	game.sprites[game.base.keep.x][game.base.keep.y] = game.base.keep.sprite;
 	game.placeWorkers();
 	game.drawWorld();

@@ -51,12 +51,12 @@ class Actor {
     let dist = 1;
     while (goal.length === 0) {
 
-      if (game.world[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
-        goal = [prevX - (dist * xDir), prevY - (dist * yDir)];
-      } else if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+      if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX, prevY - (dist * yDir)];
       } else if (game.world[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
         goal = [prevX - (dist * xDir), prevY];
+      } else if (game.world[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+        goal = [prevX - (dist * xDir), prevY - (dist * yDir)];
       } else if (game.world[prevX + (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX + (dist * xDir), prevY - (dist * yDir)];
       } else if (game.world[prevX - (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {

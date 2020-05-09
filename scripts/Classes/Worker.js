@@ -37,6 +37,7 @@ class Worker extends Actor {
   }
 
   returnHome() {
+    console.log('returning home');
     this.goal = [this.home.x, this.home.y];
     this.move();
   }
