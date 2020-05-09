@@ -52,6 +52,16 @@ game.canvasClick = (e) => {
 	const clickY = e.clientY - e.target.offsetTop;
 	const x = Math.floor(clickX / game.tileWidth);
 	const y = Math.floor(clickY / game.tileHeight);
+	if (game.selectedActor !== -1) {
+		// 	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
+		// 		game.selectedTile = [];
+		// 	}	else {
+		// 		game.selectedTile = [x, y];
+		// 	}
+		// } else {
+			game.endTile = [x, y];
+		}
+		// game.drawGUI();
 	for (let i = 0; i < game.base.workers.length; i++) {
 		if (game.base.workers[i].x === x && game.base.workers[i].y === y) {
 			if (game.selectedActor !== i) {
@@ -63,16 +73,6 @@ game.canvasClick = (e) => {
 			}
 		}
 	}
-	if (game.selectedActor !== -1) {
-	// 	if (x === game.selectedTile[0] && y === game.selectedTile[1]) {
-	// 		game.selectedTile = [];
-	// 	}	else {
-	// 		game.selectedTile = [x, y];
-	// 	}
-	// } else {
-		game.endTile = [x, y];
-	}
-	// game.drawGUI();
 }
 
 game.goToPath = () => {
@@ -82,7 +82,7 @@ game.goToPath = () => {
 }
 
 game.setPlace = () => {
-	game.base.workers.push(new Actor(game.selectedTile[0], game.selectedTile[1], []));
+	game.base.workers.push(new Actor(game.base.workers.length, game.selectedTile[0], game.selectedTile[1], []));
 	game.drawSprites();
 }
 
@@ -96,17 +96,22 @@ game.unselectAll = () => {
 
 game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
+		const worker = game.base.workers[game.selectedActor];
 		// console.log(game.endTile);
-		game.base.workers[game.selectedActor].goal = game.endTile;
+		worker.goal = game.endTile;
 		if (game.resources[`${game.endTile[0]}${game.endTile[1]}`]) {
-			clearInterval(game.base.workers[game.selectedActor].work.interval);
-			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0]}${game.endTile[1]}`];
-			game.base.workers[game.selectedActor].work.location = game.endTile;
-			game.base.workers[game.selectedActor].working = true;
+			if (worker.work.interval) {
+				clearInterval(worker.work.interval);
+			}
+			worker.work.type = game.resources[`${game.endTile[0]}${game.endTile[1]}`];
+			worker.work.location = game.endTile;
+			worker.working = true;
 		} else {
-			clearInterval(game.base.workers[game.selectedActor].work.interval);
-			game.base.workers[game.selectedActor].working = false;
-			game.base.workers[game.selectedActor].returning = false;
+			if (worker.work.interval) {
+				clearInterval(worker.work.interval);
+			}
+			worker.working = false;
+			worker.returning = false;
 		}
 	}
 	game.unselectAll();
@@ -236,6 +241,11 @@ game.drawGUI = () => {
 				spriteNum = 1;
 			}
 
+			if ((game.selectedActor !== -1 && game.base.workers[game.selectedActor].x === x && game.base.workers[game.selectedActor].y === y)) {
+				const worker = game.base.workers[game.selectedActor];
+				game.ctxGUI.fillText(`${worker.id},m:${worker.moving}`, x * game.tileWidth, y * game.tileHeight);
+			}
+
 			game.ctxGUI.drawImage(game.spritesheet,
 				spriteNum * game.tileWidth, 0,
 				game.tileWidth, game.tileHeight,
@@ -246,8 +256,8 @@ game.drawGUI = () => {
 }
 
 game.placeWorkers = () => {
-	game.base.workers.push(new Worker(11, 11, []));
-	game.base.workers.push(new Worker(13, 13, []));
+	game.base.workers.push(new Worker(game.base.workers.length, 11, 11, []));
+	game.base.workers.push(new Worker(game.base.workers.length, 13, 13, []));
 }
 
 game.createWorld = () => {

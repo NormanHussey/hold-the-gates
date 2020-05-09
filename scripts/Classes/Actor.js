@@ -1,5 +1,6 @@
 class Actor {
-  constructor(x, y, goal = [], sprite, speed) {
+  constructor(id, x, y, goal = [], sprite, speed) {
+    this.id = id;
     this.x = x;
     this.y = y;
     this.sprite = sprite;
@@ -73,17 +74,19 @@ class Actor {
       } else {
         dist++;
       }
+      // console.log(this.id, this.goal);
 
     }
     this.goal = goal;
     this.path = game.findPath(game.world, game.sprites, [this.x, this.y], this.goal);
-
+    // console.log(this.id, this.path);
   }
 
   drawSelf() {
     const self = this;
     game.drawSprites();
-    if (this.path.length > 0) {
+    if (this.goal.length > 0) {
+      // console.log(this.id, 'about to move', this.path);
       setTimeout(function () {
         self.move();
       }, this.speed);

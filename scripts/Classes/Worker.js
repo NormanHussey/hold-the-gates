@@ -1,6 +1,6 @@
 class Worker extends Actor {
-  constructor(x, y, goal = [], sprite = 6, speed = 200, capacity = 5) {
-    super(x, y, goal, sprite, speed);
+  constructor(id, x, y, goal = [], sprite = 6, speed = 200, capacity = 5) {
+    super(id, x, y, goal, sprite, speed);
     this.capacity = capacity;
     this.working = false;
     this.returning = false;
@@ -8,7 +8,7 @@ class Worker extends Actor {
       type: null,
       location: [],
       holding: [],
-      interval: null
+      interval: false
     }
     this.home = {
       x: game.base.keep.x,
@@ -35,8 +35,9 @@ class Worker extends Actor {
   performWork() {
     this.work.interval = setInterval(() => {
       if (this.work.holding.length >= this.capacity) {
-        console.log(this.work.holding);
+        // console.log(this.work.holding);
         clearInterval(this.work.interval);
+        this.work.interval = false;
         this.returnHome();
       } else {
         this.work.holding.push(this.work.type);
@@ -56,6 +57,7 @@ class Worker extends Actor {
     this.work.interval = setInterval(() => {
       if (this.work.holding.length === 0) {
         clearInterval(this.work.interval);
+        this.work.interval = false;
         this.returning = false;
         this.working = true;
         this.goal = this.work.location;
