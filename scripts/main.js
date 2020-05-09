@@ -99,13 +99,14 @@ game.setGoal = () => {
 		// console.log(game.endTile);
 		game.base.workers[game.selectedActor].goal = game.endTile;
 		if (game.resources[`${game.endTile[0]}${game.endTile[1]}`]) {
+			clearInterval(game.base.workers[game.selectedActor].work.interval);
 			game.base.workers[game.selectedActor].work.type = game.resources[`${game.endTile[0]}${game.endTile[1]}`];
 			game.base.workers[game.selectedActor].work.location = game.endTile;
 			game.base.workers[game.selectedActor].working = true;
 		} else {
+			clearInterval(game.base.workers[game.selectedActor].work.interval);
 			game.base.workers[game.selectedActor].working = false;
 			game.base.workers[game.selectedActor].returning = false;
-			clearInterval(game.base.workers[game.selectedActor].work.interval);
 		}
 	}
 	game.unselectAll();

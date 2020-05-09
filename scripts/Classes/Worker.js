@@ -7,7 +7,7 @@ class Worker extends Actor {
     this.work = {
       type: null,
       location: [],
-      holding: 0,
+      holding: [],
       interval: null
     }
     this.home = {
@@ -34,11 +34,12 @@ class Worker extends Actor {
 
   performWork() {
     this.work.interval = setInterval(() => {
-      if (this.work.holding >= this.capacity) {
+      if (this.work.holding.length >= this.capacity) {
+        console.log(this.work.holding);
         clearInterval(this.work.interval);
         this.returnHome();
       } else {
-        this.work.holding++;
+        this.work.holding.push(this.work.type);
       }
     }, this.speed * 4);
     
@@ -53,15 +54,15 @@ class Worker extends Actor {
 
   unloadResources() {
     this.work.interval = setInterval(() => {
-      if (this.work.holding === 0) {
+      if (this.work.holding.length === 0) {
         clearInterval(this.work.interval);
         this.returning = false;
         this.working = true;
         this.goal = this.work.location;
         this.move();
       } else {
-        this.work.holding--;
-        game.base.inventory[this.work.type]++;
+        const resource = this.work.holding.pop();
+        game.base.inventory[resource]++;
         game.updateDisplay();
       }
     }, this.speed * 2);
