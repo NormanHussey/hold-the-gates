@@ -105,6 +105,7 @@ game.setGoal = () => {
 		} else {
 			game.base.workers[game.selectedActor].working = false;
 			game.base.workers[game.selectedActor].returning = false;
+			clearInterval(game.base.workers[game.selectedActor].work.interval);
 		}
 	}
 	game.unselectAll();
