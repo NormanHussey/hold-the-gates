@@ -1,5 +1,5 @@
 class Worker extends Actor {
-  constructor(id, x, y, goal = [], sprite = 6, speed = 200, capacity = 5) {
+  constructor(id, x, y, goal = [], sprite = 8, speed = 200, capacity = 5) {
     super(id, x, y, goal, sprite, speed);
     this.capacity = capacity;
     this.working = false;

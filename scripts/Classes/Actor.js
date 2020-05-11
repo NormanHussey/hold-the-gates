@@ -10,6 +10,7 @@ class Actor {
     this.goal = goal;
     this.mainGoal = goal;
     this.moving = false;
+    game.drawSprites();
   }
 
   setGoal(newGoal) {
@@ -60,7 +61,7 @@ class Actor {
     let goal = [];
     let dist = 1;
     while (goal.length === 0) {
-      
+
       if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX, prevY - (dist * yDir)];
       } else if (game.world[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum && game.sprites[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
