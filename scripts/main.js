@@ -98,7 +98,7 @@ game.setGoal = () => {
 	if (game.selectedActor !== -1 && game.endTile.length > 0) {
 		const worker = game.base.workers[game.selectedActor];
 		// console.log(game.endTile);
-		worker.goal = game.endTile;
+		worker.setGoal(game.endTile);
 		if (game.resources[`${game.endTile[0]}${game.endTile[1]}`]) {
 			if (worker.work.interval) {
 				clearInterval(worker.work.interval);

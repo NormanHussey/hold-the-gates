@@ -49,7 +49,7 @@ class Worker extends Actor {
   returnHome() {
     this.working = false;
     this.returning = true;
-    this.goal = [this.home.x, this.home.y];
+    this.setGoal([this.home.x, this.home.y]);
     this.move();
   }
 
@@ -60,7 +60,7 @@ class Worker extends Actor {
         this.work.interval = false;
         this.returning = false;
         this.working = true;
-        this.goal = this.work.location;
+        this.setGoal(this.work.location);
         this.move();
       } else {
         const resource = this.work.holding.pop();

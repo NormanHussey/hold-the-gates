@@ -8,7 +8,13 @@ class Actor {
     game.sprites[this.x][this.y] = this.sprite;
     this.path = [];
     this.goal = goal;
+    this.mainGoal = goal;
     this.moving = false;
+  }
+
+  setGoal(newGoal) {
+    this.goal = newGoal;
+    this.mainGoal = newGoal;
   }
 
   move(goalReached = () => {}) {
@@ -36,8 +42,8 @@ class Actor {
   }
 
   findNextNearestGoal() {
-    let prevX = this.goal[0];
-    let prevY = this.goal[1];
+    let prevX = this.mainGoal[0];
+    let prevY = this.mainGoal[1];
     let xDir, yDir;
     if (this.x < prevX) {
       xDir = 1;
@@ -54,22 +60,22 @@ class Actor {
     let goal = [];
     let dist = 1;
     while (goal.length === 0) {
-
-      if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+      
+      if (game.world[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX, prevY - (dist * yDir)];
-      } else if (game.world[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum && game.sprites[prevX - (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
         goal = [prevX - (dist * xDir), prevY];
-      } else if (game.world[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX - (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX - (dist * xDir), prevY - (dist * yDir)];
-      } else if (game.world[prevX + (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX + (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX + (dist * xDir)][prevY - (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX + (dist * xDir), prevY - (dist * yDir)];
-      } else if (game.world[prevX - (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX - (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX - (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX - (dist * xDir), prevY + (dist * yDir)];
-      } else if (game.world[prevX + (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX + (dist * xDir)][prevY] <= game.maxWalkableTileNum && game.sprites[prevX + (dist * xDir)][prevY] <= game.maxWalkableTileNum) {
         goal = [prevX + (dist * xDir), prevY];
-      } else if (game.world[prevX][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX][prevY + (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX, prevY + (dist * yDir)];
-      } else if (game.world[prevX + (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
+      } else if (game.world[prevX + (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum && game.sprites[prevX + (dist * xDir)][prevY + (dist * yDir)] <= game.maxWalkableTileNum) {
         goal = [prevX + (dist * xDir), prevY + (dist * yDir)];
       } else {
         dist++;
@@ -83,12 +89,11 @@ class Actor {
   }
 
   drawSelf() {
-    const self = this;
     game.drawSprites();
     if (this.goal.length > 0) {
       // console.log(this.id, 'about to move', this.path);
-      setTimeout(function () {
-        self.move();
+      setTimeout(() => {
+        this.move();
       }, this.speed);
     }
   }
