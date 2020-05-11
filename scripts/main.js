@@ -21,6 +21,10 @@ game.selectedActor = -1;
 
 game.display = {};
 
+game.build = {};
+
+game.build.menu = {};
+
 game.base = {};
 
 game.base.keep = {
@@ -76,16 +80,11 @@ game.canvasClick = (e) => {
 	}
 }
 
-game.goToPath = () => {
-	for (let i = 0; i < game.base.workers.length; i++) {
-		game.base.workers[i].move();
-	}
-}
-
-game.setPlace = () => {
-	game.base.workers.push(new Actor(game.base.workers.length, game.selectedTile[0], game.selectedTile[1], []));
-	// game.drawSprites();
-}
+// game.goToPath = () => {
+// 	for (let i = 0; i < game.base.workers.length; i++) {
+// 		game.base.workers[i].move();
+// 	}
+// }
 
 game.unselectAll = () => {
 	game.selectedActor = -1;
@@ -132,11 +131,11 @@ game.getElements = () => {
 	game.display.gold = document.querySelector('#goldInventory');
 	game.display.food = document.querySelector('#foodInventory');
 
-	game.go = document.querySelector('#go');
-	game.go.addEventListener('click', game.goToPath);
+	// game.go = document.querySelector('#go');
+	// game.go.addEventListener('click', game.goToPath);
 
-	game.place = document.querySelector('#place');
-	game.place.addEventListener('click', game.setPlace);
+	game.build.menu.worker = document.querySelector('#buildWorker');
+	game.build.menu.worker.addEventListener('click', game.build.worker);
 
 	game.unselect = document.querySelector('#unselect');
 	game.unselect.addEventListener('click', game.unselectAll);
@@ -173,6 +172,42 @@ async function setSpriteSheetReady () {
 		game.createWorld();
 	});
 	await ready;
+}
+
+game.findPlaceNear = (building) => {
+	let goal = [];
+	let dist = 1;
+	while (goal.length === 0) {
+		if (game.world[building.x][building.y - dist] <= game.maxWalkableTileNum && game.sprites[building.x][building.y - dist] <= game.maxWalkableTileNum) {
+			goal = [building.x, building.y - dist];
+		} else if (game.world[building.x - dist][building.y] <= game.maxWalkableTileNum && game.sprites[building.x - dist][building.y] <= game.maxWalkableTileNum) {
+			goal = [building.x - dist, building.y];
+		} else if (game.world[building.x - dist][building.y - dist] <= game.maxWalkableTileNum && game.sprites[building.x - dist][building.y - dist] <= game.maxWalkableTileNum) {
+			goal = [building.x - dist, building.y - dist];
+		} else if (game.world[building.x + dist][building.y - dist] <= game.maxWalkableTileNum && game.sprites[building.x + dist][building.y - dist] <= game.maxWalkableTileNum) {
+			goal = [building.x + dist, building.y - dist];
+		} else if (game.world[building.x - dist][building.y + dist] <= game.maxWalkableTileNum && game.sprites[building.x - dist][building.y + dist] <= game.maxWalkableTileNum) {
+			goal = [building.x - dist, building.y + dist];
+		} else if (game.world[building.x + dist][building.y] <= game.maxWalkableTileNum && game.sprites[building.x + dist][building.y] <= game.maxWalkableTileNum) {
+			goal = [building.x + dist, building.y];
+		} else if (game.world[building.x][building.y + dist] <= game.maxWalkableTileNum && game.sprites[building.x][building.y + dist] <= game.maxWalkableTileNum) {
+			goal = [building.x, building.y + dist];
+		} else if (game.world[building.x + dist][building.y + dist] <= game.maxWalkableTileNum && game.sprites[building.x + dist][building.y + dist] <= game.maxWalkableTileNum) {
+			goal = [building.x + dist, building.y + dist];
+		} else {
+			dist++;
+		}
+	}
+	return goal;
+}
+
+game.build.worker = () => {
+	if (game.base.inventory.food >= 25) {
+		game.base.inventory.food -= 25;
+		game.updateDisplay();
+		const place = game.findPlaceNear(game.base.keep);
+		game.base.workers.push(new Worker(game.base.workers.length, place[0], place[1], []));
+	}
 }
 
 game.buildRandomStone = (n) => {
@@ -270,10 +305,10 @@ game.drawGUI = () => {
 				spriteNum = 1;
 			}
 
-			if ((game.selectedActor !== -1 && game.base.workers[game.selectedActor].x === x && game.base.workers[game.selectedActor].y === y)) {
-				const worker = game.base.workers[game.selectedActor];
-				game.ctxGUI.fillText(`${worker.id},m:${worker.moving}`, x * game.tileWidth, y * game.tileHeight);
-			}
+			// if ((game.selectedActor !== -1 && game.base.workers[game.selectedActor].x === x && game.base.workers[game.selectedActor].y === y)) {
+			// 	const worker = game.base.workers[game.selectedActor];
+			// 	game.ctxGUI.fillText(`${worker.id},m:${worker.moving}`, x * game.tileWidth, y * game.tileHeight);
+			// }
 
 			game.ctxGUI.drawImage(game.spritesheet,
 				spriteNum * game.tileWidth, 0,
