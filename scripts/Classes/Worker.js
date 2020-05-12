@@ -6,6 +6,7 @@ class Worker extends Actor {
     this.returning = false;
     this.work = {
       type: null,
+      obj: null,
       location: [],
       holding: [],
       interval: false
@@ -25,14 +26,31 @@ class Worker extends Actor {
   move() {
     super.move(() => {
       if (this.working) {
-        this.performWork();
+        if (this.work.type !== null) {
+          this.gatherResources();
+        } else if (this.work.obj !== null) {
+          this.repairStructure();
+        }
       } else if (this.returning) {
         this.unloadResources();
       }
     });
   }
 
-  performWork() {
+  repairStructure() {
+    this.work.interval = setInterval(() => {
+      if (this.work.obj.health < this.work.obj.maxHealth) {
+        this.work.obj.repair(1);
+        this.drawSelf();
+      } else {
+        clearInterval(this.work.interval);
+        this.work.interval = false;
+        this.working = false;
+      }
+    }, this.speed * 4);
+  }
+
+  gatherResources() {
     this.work.interval = setInterval(() => {
       if (this.work.holding.length >= this.capacity) {
         // console.log(this.work.holding);
@@ -43,7 +61,6 @@ class Worker extends Actor {
         this.work.holding.push(this.work.type);
       }
     }, this.speed * 4);
-    
   }
 
   returnHome() {

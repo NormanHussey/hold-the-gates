@@ -120,7 +120,13 @@ game.setGoal = () => {
 				clearInterval(worker.work.interval);
 			}
 			worker.work.type = game.resources[`${game.endTile[0]}${game.endTile[1]}`];
+			worker.work.obj = null;
 			worker.work.location = game.endTile;
+			worker.working = true;
+		} else if (game.base.structures[`${game.endTile[0]}${game.endTile[1]}`]) {
+			worker.work.obj = game.base.structures[`${game.endTile[0]}${game.endTile[1]}`];
+			worker.work.location = game.endTile;
+			worker.work.type = null;
 			worker.working = true;
 		} else {
 			if (worker.work.interval) {
@@ -238,6 +244,7 @@ game.build.wall = () => {
 game.build.placeWall = (x, y) => {
 	game.base.structures[`${x}${y}`] = new Structure(game.base.structures.length, x, y, 1, 1, 7, 10);
 	game.building = false;
+	game.drawSprites();
 }
 
 game.buildRandomStone = (n) => {
@@ -315,6 +322,13 @@ game.drawSprites = () => {
 	for (let x = 0; x < game.worldWidth; x++) {
 		for (let y = 0; y < game.worldHeight; y++) {
 			const spriteNum = game.sprites[x][y];
+
+			if (game.base.structures[`${x}${y}`]) {
+				const structure = game.base.structures[`${x}${y}`];
+				game.ctxSprites.globalAlpha = structure.health / structure.maxHealth;
+			} else {
+				game.ctxSprites.globalAlpha = 1;
+			}
 
 			game.ctxSprites.drawImage(game.spritesheet,
 				spriteNum * game.tileWidth, 0,
