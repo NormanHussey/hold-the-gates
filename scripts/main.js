@@ -242,9 +242,11 @@ game.build.wall = () => {
 }
 
 game.build.placeWall = (x, y) => {
-	game.base.structures[`${x}${y}`] = new Structure(game.base.structures.length, x, y, 1, 1, 7, 10);
-	game.building = false;
-	game.drawSprites();
+	if (game.world[x][y] <= game.maxWalkableTileNum && game.sprites[x][y] <= game.maxWalkableTileNum) {
+		game.base.structures[`${x}${y}`] = new Structure(game.base.structures.length, x, y, 1, 1, 7, 10);
+		game.building = false;
+		game.drawSprites();
+	}
 }
 
 game.buildRandomStone = (n) => {
