@@ -37,7 +37,7 @@ game.base.keep = {
 	maxHealth: 100
 };
 
-game.base.structures = [];
+game.base.structures = {};
 
 game.base.inventory = {
 	wood: 0,
@@ -236,7 +236,7 @@ game.build.wall = () => {
 }
 
 game.build.placeWall = (x, y) => {
-	game.base.structures.push(new Structure(game.base.structures.length, x, y, 1, 1, 7, 10));
+	game.base.structures[`${x}${y}`] = new Structure(game.base.structures.length, x, y, 1, 1, 7, 10);
 	game.building = false;
 }
 
